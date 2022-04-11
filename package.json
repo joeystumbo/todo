@@ -1,0 +1,11 @@
+{
+  "name": "fast todo app",
+  "description": "an app to explain some design concepts",
+  "version": "1.0.0",
+  "engines": {
+    "node": "14.x"
+  },
+   "scripts": {
+    "start": "node server.js"
+  }
+}
