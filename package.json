@@ -1,12 +1,12 @@
 {
-  "name": "fast todo app",
+  "name": "fast-todo-app",
   "description": "an app to explain some design concepts",
   "version": "1.0.0",
   "engines": {
     "node": "14.x"
   },
    "scripts": {
-	"test": "echo \"no test specified\" && exit 1",
+    "test": "echo \"no test specified\" && exit 1",
     "start": "node server.js"
   }
 }
