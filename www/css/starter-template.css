@@ -1,0 +1,19 @@
+.starter-template {
+  padding: 15px 15px;
+  text-align: center;
+}
+
+img.top-image{
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+#notify.toast{
+  position: fixed;
+  top:50%;
+}
+
+#notify .toast-header{
+  background-color: #31d2f2;
+}
