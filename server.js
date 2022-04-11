@@ -121,6 +121,6 @@ var server = http.createServer(function (req, res) {   //create web server
 
 });
 
-server.listen(5000); // listen for any incoming requests
-
-console.log('Node.js web server at port 5000 is running..\nplease visit http://127.0.0.1:5000 with your favorite browser');
+server.listen(process.env.PORT || 3000, function () {
+    console.log("SERVER STARTED PORT: 3000");
+});
