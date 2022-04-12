@@ -1,4 +1,7 @@
-let ui = (function(){
+let ui = (function(w){
+  //module pattern for fast javascript modularization:
+  //encapsulate and expose only a few variables to the global namespace to avoid pollution.
+
   "se strict";
 
   const uuid = ()=> {
@@ -123,4 +126,4 @@ let ui = (function(){
   }
 
 
-}());
+}(window));

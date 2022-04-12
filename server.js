@@ -30,21 +30,47 @@ var server = http.createServer(function (req, res) {   //create web server
   // based on the URL path, extract the file extension. e.g. .js, .doc, ...
   const ext = path.parse(pathname).ext;
 
-  if(req.url == '/'){
+  if(ext.length > 0){
+    //sure is a file request
+    //file streams.... -------------------------------------->
+    fs.exists(pathname, function (exist) {
+      if(!exist) {
+        // if the file is not found, return 404
+        res.statusCode = 404;
+        res.end(`File ${pathname} not found!`);
+        return;
+      }
+
+      // read file from file system
+      fs.readFile(pathname, function(err, data){
+        if(err){
+          res.statusCode = 500;
+          res.end(`Error getting the file: ${err}.`);
+        } else {
+          // if the file is found, set Content-type and send data
+          res.setHeader('Content-type', map[ext] || 'text/plain' );
+          res.end(data);
+        }
+      });
+    });
+  }
+  else{
+    //restful api requests
+    //------------------->
+    if(req.url == '/'){
       res.writeHead(301, { "Location": "http://" + req.headers['host'] + '/www/index.html' });
       return res.end();
-  }
-  else if (req.url.startsWith('/get_all')) {
+    }
+    else if (req.url.startsWith('/get_all')) {
       //return all
       let db_instance = db.get_db();
-
+      
       // set response header
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify(db_instance));
-      res.end();
-      return;
-  }
-  else if (req.url.startsWith('/add')) {
+      return res.end();
+    }
+    else if (req.url.startsWith('/add')) {
       let params = url.parse(req.url,true).query;
       let added = false;
       //make persistence
@@ -52,7 +78,7 @@ var server = http.createServer(function (req, res) {   //create web server
       if(params.uuid){
         current_instance[params.uuid] = {"msg": params.todo};
         added = true;
-
+        
         let data = [];
         for (const [key, value] of Object.entries(current_instance)) {
           //make a line with the id and the msg
@@ -65,10 +91,9 @@ var server = http.createServer(function (req, res) {   //create web server
       // set response header
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify({ response: added }));
-      res.end();
-      return;
-  }
-  else if (req.url.startsWith('/remove')) { //check the URL of the current request
+      return res.end();
+    }
+    else if (req.url.startsWith('/remove')) { //check the URL of the current request
       //console.log(url.parse(req.url,true).query);
       let params = url.parse(req.url,true).query;
       let deleted = false;
@@ -78,7 +103,6 @@ var server = http.createServer(function (req, res) {   //create web server
       if(current_instance.hasOwnProperty(params.uuid)){
         delete current_instance[params.uuid];
         deleted = true;
-
 
         let data = [];
         for (const [key, value] of Object.entries(current_instance)) {
@@ -92,32 +116,9 @@ var server = http.createServer(function (req, res) {   //create web server
       // set response header
       res.writeHead(200, { 'Content-Type': 'application/json' }); 
       res.write(JSON.stringify({ response: deleted }));
-      res.end();
-      return;
-  
-  }
-
-  //file streams.... -------------------------------------->
-  fs.exists(pathname, function (exist) {
-    if(!exist) {
-      // if the file is not found, return 404
-      res.statusCode = 404;
-      res.end(`File ${pathname} not found!`);
-      return;
+      return res.end();
     }
-
-    // read file from file system
-    fs.readFile(pathname, function(err, data){
-      if(err){
-        res.statusCode = 500;
-        res.end(`Error getting the file: ${err}.`);
-      } else {
-        // if the file is found, set Content-type and send data
-        res.setHeader('Content-type', map[ext] || 'text/plain' );
-        res.end(data);
-      }
-    });
-  });
+  }
 
 });
 

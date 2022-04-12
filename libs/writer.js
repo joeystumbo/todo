@@ -17,7 +17,8 @@ const fs = require('fs');
     */
     serialize() {
       if(!fs.existsSync(this.path)){
-        console.error("db file doesn't exist...")
+        console.error("db file doesn't exist...");
+        return 0;
       }
       let rows = 0;
       let writeStream = fs.createWriteStream(this.path);
@@ -50,7 +51,7 @@ const writer = function(data){
 
   let adapter = new Writer(DB_FILE, data);
 
-  //shallow or deep copy ????
+  //return a number, to check written lines as feedback
   return adapter.serialize();
 }
 
