@@ -32,7 +32,7 @@ var server = http.createServer(function (req, res) {   //create web server
 
   if(ext.length > 0){
     //sure is a file request
-    //file streams.... -------------------------------------->
+    //file streams -------------------------------------->
     fs.exists(pathname, function (exist) {
       if(!exist) {
         // if the file is not found, return 404
@@ -55,25 +55,33 @@ var server = http.createServer(function (req, res) {   //create web server
     });
   }
   else{
-    //restful api requests
+    //restful api requests emulator
     //------------------->
+    
+    //BASE ROOT PAGE REQUEST: redirect to the index page.
     if(req.url == '/'){
       res.writeHead(301, { "Location": "http://" + req.headers['host'] + '/www/index.html' });
       return res.end();
     }
     else if (req.url.startsWith('/get_all')) {
-      //return all
+      //route:/get_all
+      //return: json object
       let db_instance = db.get_db();
       
-      // set response header
+      // set response header and return the dict to the client consumer
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify(db_instance));
       return res.end();
     }
     else if (req.url.startsWith('/add')) {
+      //route:/add
+      //params: uuid:[string]
+      //params: todo:[string]
+      //return: json object
       let params = url.parse(req.url,true).query;
       let added = false;
-      //make persistence
+      
+      //transfer the entry to the persistence layer
       let current_instance = db.get_db();
       if(params.uuid){
         current_instance[params.uuid] = {"msg": params.todo};
@@ -88,17 +96,20 @@ var server = http.createServer(function (req, res) {   //create web server
         let rows = writer.set_data(data);
       }
 
-      // set response header
+      // set response header and return the dict to the client consumer
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify({ response: added }));
       return res.end();
     }
-    else if (req.url.startsWith('/remove')) { //check the URL of the current request
-      //console.log(url.parse(req.url,true).query);
+    else if (req.url.startsWith('/remove')) {
+      //route:/remove
+      //params: uuid:[string]
+      //return: json object
       let params = url.parse(req.url,true).query;
       let deleted = false;
-       //make persistence
-       //search the key, delete it and re write stateof the db.
+      
+
+      //search the key, delete it and re write stateof the db.
       let current_instance = db.get_db();
       if(current_instance.hasOwnProperty(params.uuid)){
         delete current_instance[params.uuid];
@@ -113,7 +124,7 @@ var server = http.createServer(function (req, res) {   //create web server
         let rows = writer.set_data(data);
       }
 
-      // set response header
+      // set response header and return the dict to the client consumer
       res.writeHead(200, { 'Content-Type': 'application/json' }); 
       res.write(JSON.stringify({ response: deleted }));
       return res.end();

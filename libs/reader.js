@@ -25,7 +25,7 @@ const fs = require('fs');
       let data =fs.readFileSync(this.path, 'utf8');
       this.dataArray = data.split(/\r?\n/);
     }catch (err) {
-      // Here you get the error fi soemthig goes wrong with the file
+      // Here you get the error fi something goes wrong with the file
       console.error("Can't read the file...", err);
     }
   }

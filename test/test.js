@@ -16,13 +16,14 @@ function test_1(){
 }
 
 function test_2(){
-  //test read an load file products
+  //test read an load file
   console.log('\x1b[36m%s\x1b[0m', "test_2: reader");
   const db = reader.get_db();
   assert(Object.keys(db).length > 0, "YOU MUST BE ABLE TO LOAD DATA FROM db.csv FILE !");
 }
 
 function test_3(){
+  //test http requests
   console.log('\x1b[36m%s\x1b[0m', "test_3: http request");
   const options = [{
     hostname: 'localhost',

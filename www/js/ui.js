@@ -4,6 +4,8 @@ let ui = (function(w){
 
   "se strict";
 
+  // preudo hash id
+  // @return {unique string value}
   const uuid = ()=> {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -11,25 +13,35 @@ let ui = (function(w){
     });
   }
 
+  //GET all enties
   async function get_all(){
     const response = await fetch('/get_all');
     const json_value = await response.json();
     return json_value;
   }
 
+  //GET request to add an entry
+  //note: use PUT/POST verb instead
   async function add_todo(value, unique){
     const response = await fetch('/add?todo=' + value + '&uuid=' + unique);
     const json_value = await response.json();
     return json_value;
   }
 
+  //GET request to remove an entry
+  //note: use DELETE/POST verb instead
   async function remove_todo(value){
     const response = await fetch('/remove?uuid=' + value);
     const json_value = await response.json();
     return json_value;
   }
 
-
+  /**
+  * create ui element and append to the list
+  * @param value{string} the todo data
+  * @param unique{string} the pseudo hash value
+  * @return {void}
+  */
   const create_item =(value, unique)=>{
     let list = document.getElementById('todo-list');
     let element = document.createElement('li');
@@ -66,6 +78,11 @@ let ui = (function(w){
     list.scrollIntoView({behavior: "smooth", block: "end"});
   }
 
+  /**
+  * show a pop up message
+  * @param value{string} the message to show to the user
+  * @return {void}
+  */
   const notify=(value)=>{
     let notify = document.getElementById('notify');
     let msg = notify.getElementsByClassName('toast-body');
@@ -77,13 +94,16 @@ let ui = (function(w){
   }
 
 
+  /**
+  * initialize this module on body load
+  * @return {void}
+  */
   const init = ()=>{
 
     //prepare the main button to work
     let btn = document.getElementById('add-btn');
     btn.addEventListener("click", (e)=>{
       e.preventDefault();
-      //fetch
       let todo = document.getElementById('new-todo');
       if(todo.value.length === 0){
         notify("please add a task !");
@@ -91,6 +111,7 @@ let ui = (function(w){
 
       }else{
          let unique = uuid();
+         //fetch
          add_todo(todo.value, unique).then(value =>{
           if(value.response === true){
             create_item(todo.value, unique);
